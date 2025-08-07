@@ -15,8 +15,9 @@ body {
 .login-wrapper {
   display: flex;
   flex-direction: column; /* Default for mobile */
-  width: 100%;
-  max-width: 56rem; /* max-w-4xl */
+  width: 100vw;
+  height: 100vh;
+  /* max-width: 56rem; max-w-4xl */
   box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); /* shadow-2xl */
   border-radius: 1.5rem; /* rounded-3xl */
   overflow: hidden;

@@ -2,14 +2,15 @@ import React, { useState } from "react";
 // Make sure to import your CSS file in your actual project
 import "./login.css";
 
-const App = () => {
+const LoginSite = () => {
   // State to manage which form is displayed
   const [formState, setFormState] = useState("login"); // 'login', 'register1', 'register2'
 
   // State for form fields
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState(""); // This will hold the username OR email
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [streetName, setStreetName] = useState("");
   const [city, setCity] = useState("");
@@ -33,11 +34,12 @@ const App = () => {
     setSuccess("");
 
     try {
-      const response = await fetch("http://localhost:6080/login", {
+      // UPDATED URL: Now relative
+      const response = await fetch("/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ username: email, password }),
+        body: JSON.stringify({ identifier: identifier, password }),
       });
 
       const data = await response.json();
@@ -49,7 +51,7 @@ const App = () => {
 
       setSuccess(data.message || "Login successful! Redirecting...");
       console.log("Login successful:", data);
-      // Example: setTimeout(() => window.location.href = '/dashboard', 2000);
+      setTimeout(() => (window.location.href = "/home"), 2000);
     } catch (err) {
       console.error("Login error:", err);
       if (err instanceof TypeError && err.message === "Failed to fetch") {
@@ -67,7 +69,6 @@ const App = () => {
     setError("");
     setSuccess("");
 
-    // Final step of registration
     const registrationData = {
       username,
       email,
@@ -79,7 +80,7 @@ const App = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:6080/register", {
+      const response = await fetch("/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -93,7 +94,6 @@ const App = () => {
 
       setSuccess(data.message || "Registration successful! Please log in.");
       console.log("Registration successful:", data);
-      // Switch to login form after successful registration
       setTimeout(() => switchForm("login"), 2000);
     } catch (err) {
       console.error("Registration error:", err);
@@ -113,22 +113,17 @@ const App = () => {
       setError("Passwords do not match.");
       return;
     }
-    // If passwords match, proceed to the next step
     switchForm("register2");
   };
-
-  // ===============================================================
-  //                      RENDER LOGIC
-  // ===============================================================
 
   const renderLoginForm = () => (
     <form onSubmit={handleLogin} className="form">
       <div className="input-group">
         <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
+          type="text"
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
+          placeholder="Username or Email"
           className="input-field"
           required
         />
@@ -291,4 +286,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default LoginSite;
