@@ -1,0 +1,100 @@
+.main-header {
+  background-color: #f87171;
+  color: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo-container {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  text-decoration: none;
+  color: white;
+}
+
+.logo-title {
+  font-size: 2rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+.location-text {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.main-nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-button.login {
+  background-color: transparent;
+  color: white;
+  border: 1px solid white;
+}
+.nav-button.login:hover {
+  background-color: white;
+  color: #f87171;
+}
+
+.nav-button.register {
+  background-color: white;
+  color: #f87171;
+}
+.nav-button.register:hover {
+  background-color: #fee2e2;
+}
+
+/* --- ADD THESE NEW STYLES --- */
+
+.nav-user-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-picture {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.nav-button.logout {
+  background-color: transparent;
+  color: white;
+  border: 1px solid white;
+}
+
+.nav-button.logout:hover {
+  background-color: white;
+  color: #f87171;
+}
+
+.nav-button.create-listing {
+  background-color: white;
+  color: #f87171;
+}
+.nav-button.create-listing:hover {
+  background-color: #fee2e2;
+}

@@ -2,9 +2,12 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Import your components from their new locations
-import LoginSite from "./components/login/loginSite.js";
-import Landing from "./components/landing/landing";
-import BookingView from "./components/booking/bookingView.js";
+import LoginSite from "./components/pages/login/loginSite";
+import Landing from "./components/pages/landing/landing";
+import BookingItem from "./components/booking/bookingCard";
+import BookingView from "./components/booking/bookingView";
+import CreateListing from "./components/pages/listing/CreateListing";
+import SearchResultsPage from "./components/pages/searchResults/SearchResults";
 
 // Import your main CSS file
 import "./App.css";
@@ -16,14 +19,15 @@ function App() {
         {/* The root path "/" will render your login page */}
         <Route path="/" element={<LoginSite />} />
 
-        {/* The /landing path for after a user logs in */}
         <Route path="/home" element={<Landing />} />
 
         {/* A specific /login route is also good practice */}
         <Route path="/login" element={<LoginSite />} />
 
-        {/* Booking part for opening a booking */}
-        <Route path="/booking" element={<BookingView />} />
+        {/* Routes for the new booking components */}
+        <Route path="/booking-view" element={<BookingView />} />
+        <Route path="/search" element={<SearchResultsPage />} />
+        <Route path="/listings/new" element={<CreateListing />} />
       </Routes>
     </Router>
   );

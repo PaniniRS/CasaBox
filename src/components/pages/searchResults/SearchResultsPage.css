@@ -1,0 +1,30 @@
+.search-results-page {
+  background-color: #f1f5f9;
+  min-height: 100vh;
+}
+
+.results-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.results-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #334155;
+}
+
+.results-title em {
+  font-style: normal;
+  color: #f87171;
+}
+
+.loading-message,
+.no-results-message {
+  text-align: center;
+  font-size: 1.25rem;
+  color: #64748b;
+  padding: 4rem 0;
+}
