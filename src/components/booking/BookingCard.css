@@ -16,7 +16,7 @@
   font-family: "Kufam", sans-serif;
 }
 
-.card-overlay-gradient {
+.card-overlay-gradient-bc {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -33,19 +33,19 @@
   z-index: 1;
 }
 
-.card-details-container {
+.card-details-container-bc {
   position: relative;
   z-index: 2;
   padding: 0 18px 20px 18px;
 }
 
-.card-place-name {
+.card-place-name-bc {
   font-size: 24px;
   font-weight: 700;
   margin: 0 0 10px;
 }
 
-.card-info-grid {
+.card-info-grid-bc {
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -53,42 +53,41 @@
   margin-bottom: 8px; /* Reduced margin */
 }
 
-.info-item {
+.info-item-bc {
   display: flex;
   align-items: baseline;
   gap: 8px;
 }
 
-.info-label-small {
+.info-label-small-bc {
   font-size: 16px;
   font-weight: 700;
 }
 
-.info-value {
+.info-value-bc {
   font-size: 18px;
   font-weight: 400;
 }
 
-/* --- ADD THESE NEW STYLES --- */
-.card-price-container {
+.card-price-container-bc {
   margin-bottom: 12px;
   display: flex;
   align-items: baseline;
   gap: 6px;
 }
 
-.price-amount {
+.price-amount-bc {
   font-size: 20px;
   font-weight: 700;
 }
 
-.price-unit {
+.price-unit-bc {
   font-size: 14px;
   font-weight: 400;
   opacity: 0.9;
 }
 
-.see-booking-btn {
+.see-booking-btn-bc {
   width: 220px;
   height: 48px;
   background: white;
@@ -102,6 +101,6 @@
   transition: transform 0.2s;
 }
 
-.see-booking-btn:active {
+.see-booking-btn-bc:active {
   transform: scale(0.95);
 }

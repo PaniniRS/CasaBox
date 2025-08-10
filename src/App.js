@@ -28,6 +28,7 @@ function App() {
         <Route path="/booking-view" element={<BookingView />} />
         <Route path="/search" element={<SearchResultsPage />} />
         <Route path="/listings/new" element={<CreateListing />} />
+        <Route path="/listing/:id" element={<BookingView />} />
       </Routes>
     </Router>
   );
