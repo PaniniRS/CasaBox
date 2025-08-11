@@ -78,10 +78,10 @@
 .card-price-container {
   margin-bottom: 12px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 6px;
   justify-content: center;
-  flex-direction: row-reverse;
+  flex-direction: row;
 }
 
 .price-amount {
