@@ -1,0 +1,27 @@
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.star {
+  font-size: 2rem; /* Adjust size as needed */
+  color: #d1d5db; /* Color for empty stars */
+}
+
+.full-star {
+  color: #f87171; /* Primary red color */
+}
+
+.half-star {
+  background: linear-gradient(to right, #f87171 50%, #d1d5db 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rating-text {
+  margin-left: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: black;
+}

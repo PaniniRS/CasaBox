@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../../components/layout/Header";
 import EditAccountModal from "../../../components/modals/EditAccountModal";
+import StarRating from "../../../components/rating/StarRating";
 import "./ProfilePage.css";
 
 const ProfilePage = () => {
@@ -117,11 +118,13 @@ const ProfilePage = () => {
           <div className="ratings-container">
             <div className="rating-item">
               <h3>Provider Rating</h3>
-              <p>{user.AverageProviderRating || "N/A"} / 5</p>
+              {/* Use the new StarRating component */}
+              <StarRating rating={user.AverageProviderRating} />
             </div>
             <div className="rating-item">
               <h3>Seeker Rating</h3>
-              <p>{user.AverageSeekerRating || "N/A"} / 5</p>
+              {/* Use the new StarRating component */}
+              <StarRating rating={user.AverageSeekerRating} />
             </div>
           </div>
         </div>
