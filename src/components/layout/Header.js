@@ -79,13 +79,15 @@ const Header = () => {
               </button>
               <img
                 src={
-                  user.ProfilePictureURL ||
-                  `https://placehold.co/40x40/f87171/white?text=${user.Username.charAt(
-                    0
-                  ).toUpperCase()}`
+                  user.ProfilePictureURL
+                    ? `http://88.200.63.148:3080/${user.ProfilePictureURL}`
+                    : `https://placehold.co/40x40/f87171/white?text=${user.Username.charAt(
+                        0
+                      ).toUpperCase()}`
                 }
                 alt="User profile"
                 className="profile-picture"
+                onClick={() => navigate("/profile")} // <-- ADDED THIS ONCLICK HANDLER
               />
             </div>
           ) : (
