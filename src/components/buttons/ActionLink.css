@@ -1,0 +1,29 @@
+.action-link-btn {
+  width: 220px;
+  height: 48px;
+  background: white;
+  border-radius: 32px;
+  border: 1px solid #5b3434;
+  cursor: pointer;
+  color: #5b3434;
+  font-family: "Kufam", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.action-link-btn:hover {
+  background-color: #f87171;
+  color: white;
+  border-color: #f87171;
+}
+
+.action-link-btn.secondary {
+  background-color: #d1d5db;
+  border-color: #9ca3af;
+  color: #4b5563;
+}
+.action-link-btn.secondary:hover {
+  background-color: #9ca3af;
+  color: white;
+}

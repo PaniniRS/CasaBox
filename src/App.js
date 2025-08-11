@@ -8,6 +8,8 @@ import BookingView from "./components/booking/bookingView";
 import CreateListing from "./components/pages/listing/CreateListing";
 import SearchResultsPage from "./components/pages/searchResults/SearchResults";
 import ProfilePage from "./components/pages/profile/ProfilePage";
+import MyListingsPage from "./components/pages/listings/MyListingsPage";
+import MyBookingsPage from "./components/pages/bookings/MyBookingsPage";
 
 // Import your main CSS file
 import "./App.css";
@@ -30,6 +32,8 @@ function App() {
         <Route path="/listings/new" element={<CreateListing />} />
         <Route path="/listing/:id" element={<BookingView />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/my-listings" element={<MyListingsPage />} />
+        <Route path="/my-bookings" element={<MyBookingsPage />} />
       </Routes>
     </Router>
   );

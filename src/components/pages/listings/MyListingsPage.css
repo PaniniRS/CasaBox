@@ -1,0 +1,25 @@
+.my-listings-page .page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.my-listings-page h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.listing-item-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.listing-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

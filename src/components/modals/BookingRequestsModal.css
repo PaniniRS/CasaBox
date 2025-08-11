@@ -1,0 +1,45 @@
+.requests-modal {
+  width: 100%;
+  max-width: 600px;
+}
+
+.requests-list {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 1rem;
+}
+
+.request-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.request-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.request-info span {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.request-actions button {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.request-actions .accept-btn {
+  background-color: #22c55e;
+  margin-right: 0.5rem;
+}
+
+.request-actions .reject-btn {
+  background-color: #ef4444;
+}

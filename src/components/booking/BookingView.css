@@ -114,7 +114,7 @@
 }
 
 .info-item span:first-child {
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   font-weight: 700;
 }
 
@@ -123,12 +123,12 @@
 }
 
 .price-amount {
-  font-size: 2rem;
+  font-size: 1.4rem;
   font-weight: 700;
 }
 
 .price-unit {
-  font-size: 1rem;
+  font-size: 0.7rem;
 }
 
 .book-now-btn {

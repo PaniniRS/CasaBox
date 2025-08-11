@@ -118,12 +118,10 @@ const ProfilePage = () => {
           <div className="ratings-container">
             <div className="rating-item">
               <h3>Provider Rating</h3>
-              {/* Use the new StarRating component */}
               <StarRating rating={user.AverageProviderRating} />
             </div>
             <div className="rating-item">
               <h3>Seeker Rating</h3>
-              {/* Use the new StarRating component */}
               <StarRating rating={user.AverageSeekerRating} />
             </div>
           </div>
@@ -131,8 +129,18 @@ const ProfilePage = () => {
 
         <div className="actions-panel">
           <div className="action-buttons-top">
-            <button className="action-btn">My listings</button>
-            <button className="action-btn">My Bookings</button>
+            <button
+              className="action-btn"
+              onClick={() => navigate("/my-listings")}
+            >
+              My Listings
+            </button>
+            <button
+              className="action-btn"
+              onClick={() => navigate("/my-bookings")}
+            >
+              My Bookings
+            </button>
             <button className="action-btn">My Seals</button>
           </div>
           <div className="action-buttons-bottom">
