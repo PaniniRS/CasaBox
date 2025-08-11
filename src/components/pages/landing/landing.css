@@ -36,8 +36,8 @@
   bottom: -4rem;
   left: 50%;
   transform: translateX(-50%);
-  color: white;
-  animation: bounce 2s infinite;
+  color: black;
+  animation: bounce 2.2s infinite;
 }
 
 @keyframes bounce {
@@ -73,7 +73,7 @@
 .listings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
+  gap: 1.6rem;
 }
 
 .error-message {

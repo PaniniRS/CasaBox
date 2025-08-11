@@ -4,7 +4,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import ReactDatePicker from "react-datepicker";
 import "./BookingView.css";
 
-// --- Helper Components ---
+// ===============================================================
+//                      Helper Components
+// ===============================================================
 const Counter = ({ value, onIncrement, onDecrement }) => (
   <div className="counter">
     <button onClick={onDecrement}>-</button>
@@ -50,17 +52,51 @@ const BookingView = () => {
   const [itemCounts, setItemCounts] = useState({ S: 0, M: 0, L: 0 });
   const [sqm, setSqm] = useState(1);
   const [totalCost, setTotalCost] = useState(0);
-  const [bookingStep, setBookingStep] = useState("initial"); // 'initial', 'confirming', 'booked'
+  const [bookingStep, setBookingStep] = useState("initial");
+
+  // --- NEW: useEffect for Keyboard Navigation ---
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (!listing || listing.Images.length <= 1) return;
+
+      if (event.key === "ArrowRight") {
+        setCurrentImageIndex(
+          (prevIndex) => (prevIndex + 1) % listing.Images.length
+        );
+      } else if (event.key === "ArrowLeft") {
+        setCurrentImageIndex(
+          (prevIndex) =>
+            (prevIndex - 1 + listing.Images.length) % listing.Images.length
+        );
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [listing]); // Dependency array ensures the listener always has the latest listing data
 
   useEffect(() => {
-    const fetchListing = async () => {
+    const checkSessionAndFetchListing = async () => {
       try {
-        const response = await fetch(`/listings/${id}`);
-        const result = await response.json();
-        if (result.success) {
-          setListing(result.data);
+        const sessionResponse = await fetch("/auth/session", {
+          credentials: "include",
+        });
+        const sessionResult = await sessionResponse.json();
+        if (!sessionResult.success) {
+          navigate("/login");
+          return;
+        }
+
+        const listingResponse = await fetch(`/listings/${id}`);
+        const listingResult = await listingResponse.json();
+        if (listingResult.success) {
+          setListing(listingResult.data);
         } else {
-          throw new Error(result.message);
+          throw new Error(listingResult.message);
         }
       } catch (err) {
         setError("Failed to load listing details.");
@@ -68,8 +104,8 @@ const BookingView = () => {
         setLoading(false);
       }
     };
-    fetchListing();
-  }, [id]);
+    checkSessionAndFetchListing();
+  }, [id, navigate]);
 
   useEffect(() => {
     if (!listing || !startDate || !endDate || startDate > endDate) {
@@ -90,30 +126,23 @@ const BookingView = () => {
 
   const handleBooking = async () => {
     setError("");
-
     if (bookingStep === "initial") {
-      if (!startDate || !endDate) {
-        setError("Please select a start and end date.");
-        return;
-      }
-      if (startDate > endDate) {
-        setError("End date must be after the start date.");
-        return;
-      }
+      if (!startDate || !endDate)
+        return setError("Please select a start and end date.");
+      if (startDate > endDate)
+        return setError("End date must be after the start date.");
       if (
         listing.StorageType === "ItemSlot" &&
         itemCounts.S + itemCounts.M + itemCounts.L === 0
       ) {
-        setError("Please select the number of items.");
-        return;
+        return setError("Please select the number of items.");
       }
       setBookingStep("confirming");
       return;
     }
-
     if (bookingStep === "confirming") {
       const bookingData = {
-        listingId: id,
+        listingId: parseInt(id, 10),
         startDate,
         endDate,
         totalCost,
@@ -125,7 +154,6 @@ const BookingView = () => {
         ].filter((item) => item.quantity > 0),
         requestedSqm: sqm,
       };
-
       try {
         const response = await fetch("/listings/book", {
           method: "POST",
@@ -135,7 +163,6 @@ const BookingView = () => {
         });
         const result = await response.json();
         if (!response.ok) throw new Error(result.message || "Booking failed.");
-
         setBookingStep("booked");
       } catch (err) {
         setError(err.message);
@@ -144,21 +171,18 @@ const BookingView = () => {
     }
   };
 
-  if (loading) return <div className="loading-screen">Loading...</div>;
-  if (error) return <div className="error-screen">{error}</div>;
-  if (!listing) return <div className="error-screen">Listing not found.</div>;
-
   const currentImage =
-    listing.Images[currentImageIndex]?.FileURL ||
+    listing?.Images[currentImageIndex]?.FileURL ||
     "https://placehold.co/1200x800";
-
-  const price = parseFloat(listing.PricePerUnit);
+  const price = parseFloat(listing?.PricePerUnit);
 
   return (
     <div
       className="booking-view-page"
       style={{
-        backgroundImage: `url(http://88.200.63.148:3080/${currentImage})`,
+        backgroundImage: `url(${
+          listing ? `http://88.200.63.148:3080/${currentImage}` : ""
+        })`,
       }}
     >
       {bookingStep === "booked" && (
@@ -166,164 +190,180 @@ const BookingView = () => {
           onAnimationEnd={() => setTimeout(() => navigate("/home"), 1500)}
         />
       )}
-      <div className="page-overlay">
-        <div className="info-panel">
-          <div className="image-dots">
-            {listing.Images.map((img, index) => (
-              <span
-                key={index}
-                className={`dot ${index === currentImageIndex ? "active" : ""}`}
-                onClick={() => setCurrentImageIndex(index)}
-              ></span>
-            ))}
-          </div>
-          <h1 className="place-title">{listing.Title}</h1>
-          <div className="capacity-info">
-            {listing.StorageType === "ItemSlot" ? (
-              <div className="info-item">
-                <span>SLOTS</span>
-                <span>{listing.TotalCapacity_Slots}</span>
-              </div>
-            ) : (
-              <div className="info-item">
-                <span>SQM</span>
-                <span>{listing.CapacitySQMeter}</span>
-              </div>
-            )}
-          </div>
-          <div className="price-info">
-            {/* Use the converted price variable here */}
-            <span className="price-amount">
-              ${!isNaN(price) ? price.toFixed(2) : "0.00"}
-            </span>
-            <span className="price-unit">{listing.PriceUnit}</span>
-          </div>
-          <button
-            className={`book-now-btn ${
-              bookingStep === "confirming" ? "confirming" : ""
-            }`}
-            onClick={handleBooking}
-          >
-            {bookingStep === "confirming" ? "Confirm?" : "Book now"}
-          </button>
-          {error && <p className="booking-error-message">{error}</p>}
-        </div>
 
-        <div className={`booking-panel ${isPanelOpen ? "open" : ""}`}>
-          <button
-            className="panel-toggle"
-            onClick={() => setIsPanelOpen(!isPanelOpen)}
-          >
-            {isPanelOpen ? "→" : "←"}
-          </button>
-          <div className="panel-content">
-            <section>
-              <h2>Availability</h2>
-              <div className="date-picker-group">
-                <label>From:</label>
-                <ReactDatePicker
-                  selected={startDate}
-                  onChange={(date) => setStartDate(date)}
-                  placeholderText="Select Date"
-                />
+      <button className="close-page-btn" onClick={() => navigate("/home")}>
+        &times;
+      </button>
+
+      <div className="page-content-wrapper">
+        {loading ? (
+          <div className="status-message">Loading...</div>
+        ) : error && !listing ? (
+          <div className="status-message">{error}</div>
+        ) : listing ? (
+          <>
+            <div className="info-panel">
+              <div className="image-dots">
+                {listing.Images.map((img, index) => (
+                  <span
+                    key={index}
+                    className={`dot ${
+                      index === currentImageIndex ? "active" : ""
+                    }`}
+                    onClick={() => setCurrentImageIndex(index)}
+                  ></span>
+                ))}
               </div>
-              <div className="date-picker-group">
-                <label>To:</label>
-                <ReactDatePicker
-                  selected={endDate}
-                  onChange={(date) => setEndDate(date)}
-                  placeholderText="Select Date"
-                />
-              </div>
-            </section>
-            <section>
-              <h2>
-                {listing.StorageType === "ItemSlot"
-                  ? "Luggage Size"
-                  : "Space Size"}
-              </h2>
-              {listing.StorageType === "ItemSlot" ? (
-                <div className="item-counters">
-                  <div className="item-type">
-                    <span>S</span>
-                    <Counter
-                      value={itemCounts.S}
-                      onIncrement={() =>
-                        setItemCounts((p) => ({ ...p, S: p.S + 1 }))
-                      }
-                      onDecrement={() =>
-                        setItemCounts((p) => ({
-                          ...p,
-                          S: Math.max(0, p.S - 1),
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="item-type">
-                    <span>M</span>
-                    <Counter
-                      value={itemCounts.M}
-                      onIncrement={() =>
-                        setItemCounts((p) => ({ ...p, M: p.M + 1 }))
-                      }
-                      onDecrement={() =>
-                        setItemCounts((p) => ({
-                          ...p,
-                          M: Math.max(0, p.M - 1),
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="item-type">
-                    <span>L</span>
-                    <Counter
-                      value={itemCounts.L}
-                      onIncrement={() =>
-                        setItemCounts((p) => ({ ...p, L: p.L + 1 }))
-                      }
-                      onDecrement={() =>
-                        setItemCounts((p) => ({
-                          ...p,
-                          L: Math.max(0, p.L - 1),
-                        }))
-                      }
-                    />
-                  </div>
+              <h1 className="place-title">{listing.Title}</h1>
+              <div className="details-row">
+                <div className="capacity-info">
+                  {listing.StorageType === "ItemSlot" ? (
+                    <div className="info-item">
+                      <span>SLOTS</span>
+                      <span>{listing.TotalCapacity_Slots}</span>
+                    </div>
+                  ) : (
+                    <div className="info-item">
+                      <span>SQM</span>
+                      <span>{listing.CapacitySQMeter}</span>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="sqm-counter">
-                  <Counter
-                    value={sqm}
-                    onIncrement={() => setSqm((p) => p + 1)}
-                    onDecrement={() => setSqm((p) => Math.max(1, p - 1))}
-                  />
+                <div className="price-info">
+                  <span className="price-amount">
+                    ${!isNaN(price) ? price.toFixed(2) : "0.00"}
+                  </span>
+                  <span className="price-unit">{listing.PriceUnit}</span>
                 </div>
-              )}
-            </section>
-            <section>
-              <h2>Summary</h2>
-              <div className="summary-details">
-                {listing.StorageType === "ItemSlot" ? (
-                  <p>
-                    <strong>Total Luggage:</strong> S: {itemCounts.S}, M:{" "}
-                    {itemCounts.M}, L: {itemCounts.L}
-                  </p>
-                ) : (
-                  <p>
-                    <strong>Total Space:</strong> {sqm} SQM
-                  </p>
-                )}
-                <p>
-                  <strong>Date:</strong> {startDate?.toLocaleDateString()} to{" "}
-                  {endDate?.toLocaleDateString()}
-                </p>
-                <p className="summary-cost">
-                  <strong>Cost:</strong> ${totalCost.toFixed(2)}
-                </p>
               </div>
-            </section>
-          </div>
-        </div>
+              <button
+                className={`book-now-btn ${
+                  bookingStep === "confirming" ? "confirming" : ""
+                }`}
+                onClick={handleBooking}
+              >
+                {bookingStep === "confirming" ? "Confirm?" : "Book now"}
+              </button>
+              {error && <p className="booking-error-message">{error}</p>}
+            </div>
+
+            <div className={`booking-panel ${isPanelOpen ? "open" : ""}`}>
+              <button
+                className="panel-toggle"
+                onClick={() => setIsPanelOpen(!isPanelOpen)}
+              >
+                {isPanelOpen ? "→" : "←"}
+              </button>
+              <div className="panel-content">
+                <section>
+                  <h2>Availability</h2>
+                  <div className="date-picker-group">
+                    <label>From:</label>
+                    <ReactDatePicker
+                      selected={startDate}
+                      onChange={(date) => setStartDate(date)}
+                      placeholderText="Select Date"
+                    />
+                  </div>
+                  <div className="date-picker-group">
+                    <label>To:</label>
+                    <ReactDatePicker
+                      selected={endDate}
+                      onChange={(date) => setEndDate(date)}
+                      placeholderText="Select Date"
+                    />
+                  </div>
+                </section>
+                <section>
+                  <h2>
+                    {listing.StorageType === "ItemSlot"
+                      ? "Luggage Size"
+                      : "Space Size"}
+                  </h2>
+                  {listing.StorageType === "ItemSlot" ? (
+                    <div className="item-counters">
+                      <div className="item-type">
+                        <span>S</span>
+                        <Counter
+                          value={itemCounts.S}
+                          onIncrement={() =>
+                            setItemCounts((p) => ({ ...p, S: p.S + 1 }))
+                          }
+                          onDecrement={() =>
+                            setItemCounts((p) => ({
+                              ...p,
+                              S: Math.max(0, p.S - 1),
+                            }))
+                          }
+                        />
+                      </div>
+                      <div className="item-type">
+                        <span>M</span>
+                        <Counter
+                          value={itemCounts.M}
+                          onIncrement={() =>
+                            setItemCounts((p) => ({ ...p, M: p.M + 1 }))
+                          }
+                          onDecrement={() =>
+                            setItemCounts((p) => ({
+                              ...p,
+                              M: Math.max(0, p.M - 1),
+                            }))
+                          }
+                        />
+                      </div>
+                      <div className="item-type">
+                        <span>L</span>
+                        <Counter
+                          value={itemCounts.L}
+                          onIncrement={() =>
+                            setItemCounts((p) => ({ ...p, L: p.L + 1 }))
+                          }
+                          onDecrement={() =>
+                            setItemCounts((p) => ({
+                              ...p,
+                              L: Math.max(0, p.L - 1),
+                            }))
+                          }
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="sqm-counter">
+                      <Counter
+                        value={sqm}
+                        onIncrement={() => setSqm((p) => p + 1)}
+                        onDecrement={() => setSqm((p) => Math.max(1, p - 1))}
+                      />
+                    </div>
+                  )}
+                </section>
+                <section>
+                  <h2>Summary</h2>
+                  <div className="summary-details">
+                    {listing.StorageType === "ItemSlot" ? (
+                      <p>
+                        <strong>Total Luggage:</strong> S: {itemCounts.S}, M:{" "}
+                        {itemCounts.M}, L: {itemCounts.L}
+                      </p>
+                    ) : (
+                      <p>
+                        <strong>Total Space:</strong> {sqm} SQM
+                      </p>
+                    )}
+                    <p>
+                      <strong>Date:</strong> {startDate?.toLocaleDateString()}{" "}
+                      to {endDate?.toLocaleDateString()}
+                    </p>
+                    <p className="summary-cost">
+                      <strong>Cost:</strong> ${totalCost.toFixed(2)}
+                    </p>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </>
+        ) : null}
       </div>
     </div>
   );
